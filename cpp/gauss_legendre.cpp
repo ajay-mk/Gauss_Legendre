@@ -10,12 +10,12 @@
 
 /**
  * @brief Computes Gauss-Legendre weights and roots for an arbitrary interval [a,b]
- * @param N The number of quadrature points
+ * @param n The number of quadrature points
  * @param a The lower bound of the interval
  * @param b The upper bound of the interval
  * @return A pair of Eigen vectors, the first containing the roots and the second containing the weights
  */
-std::pair<Eigen::VectorXd, Eigen::VectorXd> gauss_legendre(int N, double a,
+std::pair<Eigen::VectorXd, Eigen::VectorXd> gauss_legendre(int n, double a,
                                                            double b);
 
 /**
@@ -25,14 +25,14 @@ std::pair<Eigen::VectorXd, Eigen::VectorXd> gauss_legendre(int N, double a,
  * https://en.wikipedia.org/wiki/Gauss–Legendre_quadrature
  */
 std::pair<Eigen::VectorXd, Eigen::VectorXd>
-gauss_legendre(const int N, const double a, const double b) {
+gauss_legendre(const int n, const double a, const double b) {
     // make sure a < b
     assert(a < b);
-    Eigen::MatrixXd M(N, N);
+    Eigen::MatrixXd M(n, n);
     M.setZero();
 
-    for (auto i = 0; i < N; i++) {
-        if (i < N - 1) { M(i, i + 1) = sqrt(1 / (4 - pow(i + 1, -2))); }
+    for (auto i = 0; i < n; i++) {
+        if (i < n - 1) { M(i, i + 1) = sqrt(1 / (4 - pow(i + 1, -2))); }
     }
     const Eigen::MatrixXd M_ = M + M.transpose();
 
@@ -42,9 +42,9 @@ gauss_legendre(const int N, const double a, const double b) {
     Eigen::MatrixXd V = solver.eigenvectors();
 
     // scale the computed values
-    Eigen::VectorXd w = Eigen::VectorXd::Zero(N);
+    Eigen::VectorXd w = Eigen::VectorXd::Zero(n);
     assert(w.size() == x.size());
-    for (auto i = 0; i < N; i++) {
+    for (auto i = 0; i < n; i++) {
         w(i) = 0.5 * 2.0 * (b - a) * V(0, i) * V(0, i);
         x(i) = (b - a) * 0.5 * x(i) + (b + a) * 0.5;
     }

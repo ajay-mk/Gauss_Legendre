@@ -54,6 +54,7 @@ def gauss_legendre(n, a, b):
 
     # Scale eigenvalues to lie in [a,b] and compute weights
     w = np.zeros(n)
+    assert w.size == x.size
     for i in range(n):
         w[i] = 0.5 * 2.0 * (b - a) * V[0, i] ** 2
         x[i] = (b - a) * 0.5 * x[i] + (b + a) * 0.5
