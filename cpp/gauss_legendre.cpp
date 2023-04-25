@@ -32,19 +32,19 @@ gauss_legendre(const int n, const double a, const double b) {
     M.fill(0.0);
 
     for (auto i = 0; i < n; i++) {
-        if (i < n - 1) { M(i, i + 1) = sqrt(1 / (4 - pow(i + 1, -2))); }
+        if (i < n - 1) M(i, i + 1) = sqrt(1 / (4 - pow(i + 1, -2)));
     }
     const Eigen::MatrixXd M_ = M + M.transpose();
 
     // compute eigenvalues and eigenvectors
     const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(M_);
-    const Eigen::VectorXd evals = solver.eigenvalues();
-    const Eigen::MatrixXd evecs = solver.eigenvectors();
+    const auto evals = solver.eigenvalues();
+    const auto evecs = solver.eigenvectors();
 
     Eigen::VectorXd w = Eigen::VectorXd::Zero(n);
     Eigen::VectorXd x = Eigen::VectorXd::Zero(n);
     // scale the computed values
-    for (auto i = 0; i < n; i++) {
+    for (auto i = 0; i < n; ++i) {
         w(i) = 0.5 * 2.0 * (b - a) * evecs(0, i) * evecs(0, i);
         x(i) = (b - a) * 0.5 * evals(i) + (b + a) * 0.5;
     }
