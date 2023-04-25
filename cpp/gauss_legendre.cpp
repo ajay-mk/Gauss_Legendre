@@ -27,9 +27,9 @@ std::pair<Eigen::VectorXd, Eigen::VectorXd> gauss_legendre(int n, double a,
 std::pair<Eigen::VectorXd, Eigen::VectorXd>
 gauss_legendre(const int n, const double a, const double b) {
     // make sure a < b
-    assert(a < b);
+    assert(a < b && "a should be less than b");
     Eigen::MatrixXd M(n, n);
-    M.setZero();
+    M.fill(0.0);
 
     for (auto i = 0; i < n; i++) {
         if (i < n - 1) { M(i, i + 1) = sqrt(1 / (4 - pow(i + 1, -2))); }
@@ -38,15 +38,15 @@ gauss_legendre(const int n, const double a, const double b) {
 
     // compute eigenvalues and eigenvectors
     const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(M_);
-    Eigen::VectorXd x = solver.eigenvalues();
-    Eigen::MatrixXd V = solver.eigenvectors();
+    const Eigen::VectorXd evals = solver.eigenvalues();
+    const Eigen::MatrixXd evecs = solver.eigenvectors();
 
-    // scale the computed values
     Eigen::VectorXd w = Eigen::VectorXd::Zero(n);
-    assert(w.size() == x.size());
+    Eigen::VectorXd x = Eigen::VectorXd::Zero(n);
+    // scale the computed values
     for (auto i = 0; i < n; i++) {
-        w(i) = 0.5 * 2.0 * (b - a) * V(0, i) * V(0, i);
-        x(i) = (b - a) * 0.5 * x(i) + (b + a) * 0.5;
+        w(i) = 0.5 * 2.0 * (b - a) * evecs(0, i) * evecs(0, i);
+        x(i) = (b - a) * 0.5 * evals(i) + (b + a) * 0.5;
     }
 
     return std::make_pair(x, w);
